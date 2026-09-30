@@ -1,0 +1,1143 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Haseeb Shaikh Terminal</title>
+<meta name="description" content="Abdul Haseeb Shaikh, Senior AI Engineer working on LLM evaluation and benchmarking, backend engineer and CTF player. A terminal you can type into, with live stats.">
+<meta name="author" content="Abdul Haseeb Shaikh">
+<meta property="og:title" content="Haseeb Shaikh Terminal">
+<meta property="og:description" content="Senior AI Engineer, LLM evaluation and benchmarking, backend and platform engineer, CTF player. Type help to start.">
+<meta name="theme-color" content="#0a0e13">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230a0e13'/%3E%3Ctext x='6' y='23' font-family='monospace' font-size='18' font-weight='700' fill='%233ddc97'%3E%3E_%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,500;0,700;1,400&family=Manrope:wght@500;600;800&display=swap">
+<!--
+  Looking at the source? Good habit. Most people never do.
+  You found the first flag: CHC{v13w_s0urc3_1s_4_sk1ll}
+  Now go back and type: flag
+-->
+<style>
+/* Layout: a two-column console. Terminal on the left carries the story, a narrow live stats rail on the right. Rail drops under the terminal on phones. */
+:root {
+  --bg: #0a0e13;
+  --bg-2: #0f151c;
+  --panel: #111922;
+  --panel-2: #16202b;
+  --line: #1f2b38;
+  --line-2: #2a3846;
+  --fg: #d9e1ea;
+  --fg-2: #9aa8b7;
+  --muted: #667383;
+  --accent: #3ddc97;
+  --accent-dim: rgba(61, 220, 151, 0.14);
+  --amber: #f2b544;
+  --amber-dim: rgba(242, 181, 68, 0.14);
+  --red: #ff6b6b;
+  --blue: #6cb6ff;
+  --violet: #b892ff;
+  --sel: rgba(61, 220, 151, 0.28);
+  --shadow: 0 30px 60px -30px rgba(0, 0, 0, 0.8);
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --font-sans: "Manrope", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  color-scheme: dark;
+}
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    --bg: #eef1f4;
+    --bg-2: #e4e9ee;
+    --panel: #ffffff;
+    --panel-2: #f4f7f9;
+    --line: #d6dde5;
+    --line-2: #c3ccd6;
+    --fg: #1b2530;
+    --fg-2: #4a5866;
+    --muted: #7b8794;
+    --accent: #0f8f61;
+    --accent-dim: rgba(15, 143, 97, 0.12);
+    --amber: #a86400;
+    --amber-dim: rgba(168, 100, 0, 0.12);
+    --red: #c93838;
+    --blue: #1c6fc7;
+    --violet: #6f45d8;
+    --sel: rgba(15, 143, 97, 0.22);
+    --shadow: 0 30px 60px -36px rgba(20, 40, 60, 0.45);
+    color-scheme: light;
+  }
+}
+:root[data-theme="light"] {
+  --bg: #eef1f4;
+  --bg-2: #e4e9ee;
+  --panel: #ffffff;
+  --panel-2: #f4f7f9;
+  --line: #d6dde5;
+  --line-2: #c3ccd6;
+  --fg: #1b2530;
+  --fg-2: #4a5866;
+  --muted: #7b8794;
+  --accent: #0f8f61;
+  --accent-dim: rgba(15, 143, 97, 0.12);
+  --amber: #a86400;
+  --amber-dim: rgba(168, 100, 0, 0.12);
+  --red: #c93838;
+  --blue: #1c6fc7;
+  --violet: #6f45d8;
+  --sel: rgba(15, 143, 97, 0.22);
+  --shadow: 0 30px 60px -36px rgba(20, 40, 60, 0.45);
+  color-scheme: light;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html { height: 100%; -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  min-height: 100%;
+  background: var(--bg);
+  background-image:
+    radial-gradient(1200px 600px at 80% -10%, var(--accent-dim), transparent 60%),
+    radial-gradient(800px 400px at -10% 110%, var(--amber-dim), transparent 60%);
+  color: var(--fg);
+  font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 1.55;
+  padding-inline: 16px;
+  padding-block: 16px calc(24px + env(safe-area-inset-bottom, 0px));
+  overflow-x: hidden;
+}
+::selection { background: var(--sel); }
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; text-underline-offset: 3px; }
+a:focus-visible, button:focus-visible, input:focus-visible {
+  outline: 2px solid var(--amber);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+button { font: inherit; color: inherit; }
+
+.wrap { max-width: 1240px; margin: 0 auto; }
+
+/* Header */
+.top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px 24px;
+  padding-block: 8px 20px;
+}
+.brand { min-width: 0; }
+.brand h1 {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: clamp(20px, 2.4vw, 26px);
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+.brand h1 .cursor-dot { color: var(--accent); }
+.brand p {
+  margin: 4px 0 0;
+  color: var(--fg-2);
+  font-size: 14px;
+  max-width: 62ch;
+  text-wrap: balance;
+}
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+.meta .dot {
+  display: inline-block;
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--accent);
+  margin-right: 6px;
+  box-shadow: 0 0 0 3px var(--accent-dim);
+  vertical-align: 1px;
+  animation: pulse 2.4s ease-in-out infinite;
+}
+@keyframes pulse { 0%, 100% { box-shadow: 0 0 0 3px var(--accent-dim); } 50% { box-shadow: 0 0 0 6px transparent; } }
+.meta button.theme-btn {
+  background: none;
+  border: 1px solid var(--line-2);
+  color: var(--fg-2);
+  padding: 2px 8px;
+  border-radius: 999px;
+  cursor: pointer;
+  font-family: var(--font-mono);
+  font-size: 12px;
+}
+.meta button.theme-btn:hover { color: var(--fg); border-color: var(--accent); }
+
+/* Grid */
+.grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 300px;
+  gap: 20px;
+  align-items: start;
+}
+@media (max-width: 900px) {
+  .grid { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* Terminal window */
+.term {
+  min-width: 0;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+.term-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  background: var(--panel-2);
+  border-bottom: 1px solid var(--line);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--muted);
+}
+.lights { display: flex; gap: 6px; }
+.lights i { width: 11px; height: 11px; border-radius: 50%; background: var(--line-2); display: block; }
+.lights i:nth-child(1) { background: #ff5f57; }
+.lights i:nth-child(2) { background: #febc2e; }
+.lights i:nth-child(3) { background: #28c840; }
+.term-bar .title { margin-left: auto; margin-right: auto; }
+.term-bar .hint { display: none; }
+@media (min-width: 640px) { .term-bar .hint { display: inline; } }
+
+.screen {
+  font-family: var(--font-mono);
+  font-size: 13.5px;
+  line-height: 1.6;
+  padding: 16px 18px 6px;
+  min-height: 420px;
+  max-height: min(72vh, 760px);
+  overflow-y: auto;
+  overflow-x: hidden;
+  cursor: text;
+  overscroll-behavior: contain;
+}
+@media (max-width: 640px) { .screen { font-size: 13px; padding: 14px 12px 6px; min-height: 360px; max-height: 60vh; } }
+
+.out > * { margin: 0 0 6px; }
+.line { white-space: pre-wrap; overflow-wrap: anywhere; }
+.line.cmd { color: var(--fg); }
+.line.cmd .ps { color: var(--accent); }
+.line.cmd .ps b { color: var(--amber); font-weight: 500; }
+.line.cmd .ps .path { color: var(--blue); }
+.line.err { color: var(--red); }
+.line.dim { color: var(--muted); }
+.line.ok { color: var(--accent); }
+.kw { color: var(--amber); }
+.blk { margin: 6px 0 14px; }
+.blk h3 {
+  margin: 0 0 8px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.blk p { margin: 0 0 8px; max-width: 72ch; color: var(--fg); }
+.blk p.lead { font-family: var(--font-sans); font-size: 15px; }
+.blk p.lead strong { color: var(--accent); font-weight: 800; }
+
+/* Help table */
+.help { display: grid; grid-template-columns: max-content 1fr; gap: 3px 18px; }
+.help b { color: var(--amber); font-weight: 500; }
+.help span { color: var(--fg-2); }
+@media (max-width: 480px) { .help { grid-template-columns: 1fr; gap: 0; } .help span { margin-bottom: 6px; padding-left: 14px; } }
+
+/* Timeline */
+.tl { list-style: none; margin: 0; padding: 0 0 0 18px; border-left: 1px solid var(--line-2); }
+.tl > li { position: relative; padding: 0 0 14px 6px; }
+.tl > li:last-child { padding-bottom: 4px; }
+.tl > li::before {
+  content: "";
+  position: absolute;
+  left: -23px; top: 8px;
+  width: 9px; height: 9px;
+  border-radius: 50%;
+  background: var(--panel);
+  border: 2px solid var(--accent);
+}
+.tl li.now::before { background: var(--accent); box-shadow: 0 0 0 4px var(--accent-dim); }
+.tl .when { color: var(--muted); font-size: 12px; font-variant-numeric: tabular-nums; }
+.tl .role { font-family: var(--font-sans); font-weight: 800; font-size: 15px; color: var(--fg); }
+.tl .org { color: var(--fg-2); }
+.tl .desc { color: var(--fg-2); max-width: 70ch; font-family: var(--font-sans); font-size: 14px; margin-top: 2px; }
+.tl ul { margin: 4px 0 0; padding-left: 18px; list-style: disc; color: var(--fg-2); font-family: var(--font-sans); font-size: 14px; }
+.tl ul li { padding: 0 0 2px; }
+
+/* Project cards */
+.cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 10px; }
+.card {
+  background: var(--panel-2);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 12px 12px 10px;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  transition: border-color 0.15s, transform 0.15s;
+}
+.card:hover { border-color: var(--accent); transform: translateY(-1px); }
+.card .name { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; font-weight: 700; color: var(--fg); }
+.card .name a { color: var(--accent); font-size: 12px; white-space: nowrap; }
+.card .name .nolink { color: var(--muted); font-size: 11px; white-space: nowrap; font-weight: 400; }
+.card .what { font-family: var(--font-sans); font-size: 13.5px; color: var(--fg-2); line-height: 1.45; }
+.card .stack { display: flex; flex-wrap: wrap; gap: 4px; padding-top: 2px; }
+.tag {
+  font-size: 11px;
+  color: var(--fg-2);
+  background: var(--accent-dim);
+  border-radius: 4px;
+  padding: 1px 6px;
+  white-space: nowrap;
+}
+
+/* Skills matrix */
+.skills { display: grid; grid-template-columns: 150px 1fr; gap: 8px 14px; align-items: start; }
+.skills .g { color: var(--amber); font-weight: 500; padding-top: 2px; }
+.skills .t { display: flex; flex-wrap: wrap; gap: 5px; }
+.skills .t span { border: 1px solid var(--line-2); border-radius: 4px; padding: 1px 7px; font-size: 12px; color: var(--fg); }
+@media (max-width: 560px) { .skills { grid-template-columns: 1fr; gap: 4px 0; } .skills .t { margin-bottom: 8px; } }
+
+/* CTF list */
+.ctf { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.ctf li { display: grid; grid-template-columns: 64px 1fr; gap: 10px; align-items: start; }
+.ctf .rank {
+  font-weight: 700;
+  color: var(--amber);
+  background: var(--amber-dim);
+  border-radius: 6px;
+  text-align: center;
+  padding: 3px 4px;
+  font-size: 12px;
+  line-height: 1.3;
+}
+.ctf .rank.top { color: var(--accent); background: var(--accent-dim); }
+.ctf .ev { font-weight: 700; color: var(--fg); }
+.ctf .ev small { display: block; font-weight: 400; color: var(--fg-2); font-family: var(--font-sans); font-size: 13.5px; }
+
+/* Contact */
+.contact { display: grid; gap: 6px; }
+.contact div { display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: center; }
+.contact .k { color: var(--muted); width: 80px; }
+.copy {
+  background: none;
+  border: 1px solid var(--line-2);
+  color: var(--fg-2);
+  border-radius: 4px;
+  padding: 0 7px;
+  font-size: 11px;
+  font-family: var(--font-mono);
+  cursor: pointer;
+}
+.copy:hover { border-color: var(--accent); color: var(--fg); }
+
+/* CV links */
+.cvs { display: grid; gap: 8px; }
+.cvs a {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; min-width: 0;
+  padding: 10px 12px;
+  border: 1px solid var(--line-2);
+  border-radius: 8px;
+  color: var(--fg);
+  background: var(--panel-2);
+}
+.cvs a:hover { border-color: var(--accent); text-decoration: none; }
+.cvs a .ic { color: var(--red); font-weight: 700; font-size: 11px; border: 1px solid currentColor; border-radius: 3px; padding: 0 4px; }
+.cvs a small { color: var(--muted); margin-left: auto; font-size: 11px; overflow-wrap: anywhere; }
+@media (max-width: 640px) { .cvs a small { flex-basis: 100%; margin-left: 0; } }
+
+/* ls output */
+.ls { display: flex; flex-wrap: wrap; gap: 4px 18px; }
+.ls span { color: var(--fg); }
+.ls span.d { color: var(--blue); font-weight: 700; }
+.ls span.x { color: var(--accent); }
+
+/* Flag */
+.flagbox {
+  border: 1px dashed var(--accent);
+  background: var(--accent-dim);
+  border-radius: 8px;
+  padding: 10px 12px;
+  color: var(--fg);
+}
+.flagbox code { color: var(--accent); font-weight: 700; }
+
+/* Prompt line */
+.prompt-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 0 12px;
+  font-family: var(--font-mono);
+}
+.ps { color: var(--accent); white-space: nowrap; font-size: 13.5px; }
+.ps b { color: var(--amber); font-weight: 500; }
+.ps .path { color: var(--blue); }
+@media (max-width: 480px) { .ps .who { display: none; } }
+.prompt-row input {
+  flex: 1;
+  min-width: 0;
+  background: transparent;
+  border: 0;
+  outline: 0;
+  color: var(--fg);
+  font-family: var(--font-mono);
+  font-size: 16px;
+  padding: 0;
+  caret-color: var(--accent);
+}
+.prompt-row input::placeholder { color: var(--muted); opacity: 1; }
+.caret {
+  width: 8px; height: 1.1em;
+  background: var(--accent);
+  display: inline-block;
+  animation: blink 1.1s steps(1) infinite;
+}
+@keyframes blink { 50% { opacity: 0; } }
+.typing .prompt-row input { opacity: 0; }
+
+/* Chips */
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 10px 14px 12px;
+  border-top: 1px solid var(--line);
+  background: var(--panel-2);
+}
+.chips button {
+  background: var(--panel);
+  border: 1px solid var(--line-2);
+  color: var(--fg-2);
+  border-radius: 999px;
+  padding: 4px 11px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  cursor: pointer;
+  transition: border-color 0.12s, color 0.12s, background 0.12s;
+}
+.chips button:hover { border-color: var(--accent); color: var(--fg); background: var(--accent-dim); }
+.chips button::before { content: "$ "; color: var(--accent); }
+.chips .label { font-family: var(--font-mono); font-size: 11px; color: var(--muted); align-self: center; margin-right: 4px; }
+
+/* Stats rail */
+.rail { display: grid; gap: 12px; min-width: 0; }
+.rail h2 {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+  display: flex; align-items: center; gap: 8px;
+}
+.rail h2::after { content: ""; flex: 1; height: 1px; background: var(--line); }
+.tiles { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.tile {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 12px 12px 10px;
+  min-width: 0;
+}
+.tile.wide { grid-column: 1 / -1; }
+.tile .n {
+  font-family: var(--font-mono);
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--fg);
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+}
+.tile .n small { font-size: 14px; color: var(--accent); font-weight: 500; margin-left: 2px; }
+.tile .l { font-size: 12px; color: var(--fg-2); margin-top: 4px; line-height: 1.35; }
+.tile.live .n { color: var(--accent); }
+.tile.live .n.wait { color: var(--muted); font-size: 16px; animation: blink 1.2s steps(1) infinite; }
+.tile .src { display: block; font-family: var(--font-mono); font-size: 11px; color: var(--muted); margin-top: 6px; }
+
+/* Contribution grid, decorative */
+.contrib {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 12px;
+}
+.cg {
+  display: grid;
+  grid-template-columns: repeat(26, 1fr);
+  grid-auto-rows: 1fr;
+  gap: 3px;
+  aspect-ratio: 26 / 7;
+  max-width: 100%;
+}
+.cg i {
+  display: block;
+  border-radius: 2px;
+  background: var(--line);
+  opacity: 0;
+  transform: scale(0.6);
+  animation: pop 0.35s ease-out forwards;
+  animation-delay: var(--d, 0s);
+}
+.cg i[data-l="1"] { background: color-mix(in srgb, var(--accent) 30%, var(--line)); }
+.cg i[data-l="2"] { background: color-mix(in srgb, var(--accent) 55%, var(--line)); }
+.cg i[data-l="3"] { background: color-mix(in srgb, var(--accent) 80%, var(--line)); }
+.cg i[data-l="4"] { background: var(--accent); }
+@keyframes pop { to { opacity: 1; transform: scale(1); } }
+.contrib .cap { font-family: var(--font-mono); font-size: 11px; color: var(--muted); margin-top: 8px; display: flex; justify-content: space-between; gap: 8px; }
+
+.links { display: flex; flex-wrap: wrap; gap: 6px; }
+.links a {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--fg-2);
+  border: 1px solid var(--line-2);
+  border-radius: 6px;
+  padding: 5px 10px;
+  background: var(--panel);
+}
+.links a:hover { border-color: var(--accent); color: var(--fg); text-decoration: none; }
+
+footer {
+  margin-top: 28px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--muted);
+  display: flex; flex-wrap: wrap; gap: 6px 18px; justify-content: space-between;
+}
+
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+  .cg i { opacity: 1; transform: none; }
+  .caret { animation: none; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="brand">
+      <h1>Abdul Haseeb Shaikh<span class="cursor-dot">_</span></h1>
+      <p>Senior AI Engineer. LLM evaluation and benchmarking, backend and platform engineer, CTF player.</p>
+    </div>
+    <div class="meta">
+      <span><i class="dot" aria-hidden="true"></i>Islamabad, Pakistan</span>
+      <span id="clock" aria-label="Local time in Islamabad">--:-- PKT</span>
+      <button class="theme-btn" id="themeBtn" type="button" aria-label="Toggle light or dark theme">theme</button>
+    </div>
+  </header>
+
+  <main class="grid">
+    <section class="term" aria-label="Interactive terminal">
+      <div class="term-bar">
+        <div class="lights" aria-hidden="true"><i></i><i></i><i></i></div>
+        <span class="title">haseeb@ctf: ~</span>
+        <span class="hint">tab completes, arrows recall history</span>
+      </div>
+      <div class="screen" id="screen">
+        <div class="out" id="out" aria-live="polite" aria-relevant="additions"></div>
+        <form class="prompt-row" id="form" autocomplete="off">
+          <label for="cmd" class="sr-only">Type a command and press Enter</label>
+          <span class="ps"><span class="who"><b>haseeb</b>@ctf:<span class="path">~</span></span>$</span>
+          <input id="cmd" name="cmd" type="text" spellcheck="false" autocapitalize="off" autocorrect="off" placeholder="type help" aria-describedby="chipsLabel">
+        </form>
+      </div>
+      <div class="chips" id="chips" role="group" aria-label="Quick commands">
+        <span class="label" id="chipsLabel">or tap</span>
+      </div>
+    </section>
+
+    <aside class="rail" aria-label="Live stats">
+      <h2>Live from GitHub</h2>
+      <div class="tiles">
+        <div class="tile live"><div class="n wait" id="ghRepos">fetching</div><div class="l">public repos</div></div>
+        <div class="tile live"><div class="n wait" id="ghFollowers">fetching</div><div class="l">followers</div></div>
+        <div class="tile wide" id="ghNote" hidden><div class="l" id="ghNoteText"></div></div>
+      </div>
+
+      <h2>By the numbers</h2>
+      <div class="tiles">
+        <div class="tile"><div class="n">100<small>+</small></div><div class="l">benchmark tasks authored</div></div>
+        <div class="tile"><div class="n">2,000<small>+</small></div><div class="l">tasks and trajectories reviewed</div></div>
+        <div class="tile"><div class="n">10</div><div class="l">frontier models evaluated</div></div>
+        <div class="tile"><div class="n">3<small>rd</small></div><div class="l">CTF team rank in Pakistan</div></div>
+        <div class="tile wide"><div class="n">1,200</div><div class="l">participants at CUI Tech Fest 2025</div></div>
+      </div>
+
+      <h2>Activity</h2>
+      <div class="contrib">
+        <div class="cg" id="cg" aria-hidden="true"></div>
+        <div class="cap"><span>decorative, not real data</span><span>less &rarr; more</span></div>
+      </div>
+
+      <h2>Links</h2>
+      <div class="links">
+        <a href="https://github.com/haseebshaikh03" target="_blank" rel="noopener">github</a>
+        <a href="https://www.linkedin.com/in/haseebshaikh03" target="_blank" rel="noopener">linkedin</a>
+        <a href="mailto:shaikh.haseeb.work@gmail.com">email</a>
+      </div>
+    </aside>
+  </main>
+
+  <footer>
+    <span>One HTML file. No frameworks, no build step.</span>
+    <span>&copy; <span id="year">2026</span> Abdul Haseeb Shaikh</span>
+  </footer>
+</div>
+
+<script>
+(function () {
+  "use strict";
+
+  var out = document.getElementById("out");
+  var screen = document.getElementById("screen");
+  var input = document.getElementById("cmd");
+  var form = document.getElementById("form");
+  var chips = document.getElementById("chips");
+  var reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  function esc(s) {
+    return String(s).replace(/[&<>"']/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+    });
+  }
+  function print(html) {
+    var t = document.createElement("template");
+    t.innerHTML = html.trim();
+    var first = t.content.firstChild;
+    out.appendChild(t.content);
+    return first;
+  }
+  function line(text, cls) {
+    return print('<div class="line ' + (cls || "") + '">' + esc(text) + "</div>");
+  }
+  function echoCmd(text) {
+    print('<div class="line cmd"><span class="ps"><span class="who"><b>haseeb</b>@ctf:<span class="path">~</span></span>$</span> ' + esc(text) + "</div>");
+  }
+  function scrollDown() {
+    screen.scrollTop = screen.scrollHeight;
+  }
+  function ext(url, label) {
+    return '<a href="' + url + '" target="_blank" rel="noopener">' + esc(label) + "</a>";
+  }
+
+  /* ---------- content ---------- */
+
+  var files = {
+    "about.txt": "about",
+    "experience.txt": "experience",
+    "projects.txt": "projects",
+    "skills.txt": "skills",
+    "ctf.txt": "ctf",
+    "contact.txt": "contact",
+    "education.txt": "education",
+    "flag.txt": "flag"
+  };
+
+  var projects = [
+    { name: "AVDA.ai", link: null, note: "site under maintenance",
+      what: "Multi-tenant AI voice agent SaaS for inbound and outbound calls. Solo backend build for a US client, Sep 2025 to Jan 2026.",
+      stack: ["Node.js", "TypeScript", "Twilio Media Streams", "WebSockets", "Google Cloud speech", "AssemblyAI", "ElevenLabs", "GPT-4o", "Gemini", "GoHighLevel", "Stripe", "MongoDB", "Redis", "AWS S3"] },
+    { name: "DrayMatch", link: "https://draymatch.io",
+      what: "US container logistics platform. Backend, scrapers and the DrayTrends analytics spec, through FuzionDev LLC.",
+      stack: ["Backend", "Scrapers", "Analytics"] },
+    { name: "Kaufes", link: "https://kaufes.ch",
+      what: "Swiss second hand marketplace and auctions. Led and coded at Cloud Mesh.",
+      stack: ["Cloud Mesh", "Node", "Next.js", "Flutter", "Wallee payments", "Swiss QR bill"] },
+    { name: "Buero 365", link: "https://play.google.com/store/apps/details?id=com.buero365.buero365",
+      what: "Task, appointment and project management app for small businesses.",
+      stack: ["Cloud Mesh", "Play Store"] },
+    { name: "Offerten Helden", link: "https://play.google.com/store/apps/details?id=ch.offerten365.offerten365",
+      what: "Quote and lead management for Swiss service businesses.",
+      stack: ["Cloud Mesh", "Play Store"] },
+    { name: "Park4Fly", link: "https://play.google.com/store/apps/details?id=net.park4fly.easyparksoftware",
+      what: "Airport parking management with a driver app.",
+      stack: ["Cloud Mesh", "Play Store"] },
+    { name: "ExploitOps", link: null, note: "no public link yet",
+      what: "Multi-cloud attack simulator, final year project. Simulates attack paths across AWS, Azure and GCP in Terraform provisioned sandboxes.",
+      stack: ["Python", "Flask", "Terraform", "Docker"] }
+  ];
+
+  var skills = [
+    ["LLM evaluation", ["benchmark and task design", "verifier and reward design", "failure mode analysis", "rubric calibration", "multi-turn trajectory review", "SFT and RLHF data quality"]],
+    ["Agentic AI", ["tool calling agents on OpenAI and Anthropic APIs", "structured outputs", "prompt pipelines", "sandboxed agent environments"]],
+    ["Backend", ["Python", "Flask", "Django", "TypeScript", "Node.js", "Express", "REST APIs", "microservices", "PostgreSQL", "MongoDB", "Redis"]],
+    ["Infrastructure", ["Docker", "CI/CD", "AWS", "Linux", "Git", "pytest"]],
+    ["Security", ["web pentesting", "reverse engineering", "CTF"]]
+  ];
+
+  function tags(list) {
+    return list.map(function (t) { return '<span class="tag">' + esc(t) + "</span>"; }).join("");
+  }
+
+  var views = {
+    help: function () {
+      print(
+        '<div class="blk"><h3>Commands</h3><div class="help">' +
+        "<b>about</b><span>who I am and what I do</span>" +
+        "<b>experience</b><span>work history as a timeline</span>" +
+        "<b>projects</b><span>things I have built and shipped</span>" +
+        "<b>skills</b><span>the skills matrix</span>" +
+        "<b>ctf</b><span>competitions and community work</span>" +
+        "<b>education</b><span>degrees and diplomas</span>" +
+        "<b>contact</b><span>email and profiles</span>" +
+        "<b>cv</b><span>download a CV as PDF</span>" +
+        "<b>ls</b><span>list files in this directory</span>" +
+        "<b>cat &lt;file&gt;</b><span>print a file, try cat about.txt</span>" +
+        "<b>theme</b><span>switch between dark and light</span>" +
+        "<b>clear</b><span>wipe the screen</span>" +
+        "</div></div>"
+      );
+      line("Tab completes a command. Up and down arrows walk through history.", "dim");
+    },
+
+    about: function () {
+      print(
+        '<div class="blk"><h3>about.txt</h3>' +
+        '<p class="lead">I am <strong>Abdul Haseeb Shaikh</strong>, a Senior AI Engineer based in Islamabad, Pakistan (UTC+5). I work remotely with US and EU teams.</p>' +
+        '<p class="lead">Two years at Turing building and running LLM evaluation programmes for frontier labs. I have authored over 100 Dockerized agentic benchmark tasks, reviewed more than 2,000 tasks and trajectories, evaluated 10 frontier models and run calibration sessions across a 60 engineer distributed team. I also grade SFT and RLHF data.</p>' +
+        '<p class="lead">Before that I ran engineering at Cloud Mesh Solutions as CEO and Head of Engineering, leading 10+ engineers on SaaS and marketplace products for international clients. Six years shipping backend systems in Python and TypeScript. On weekends I play CTFs.</p>' +
+        "</div>"
+      );
+    },
+
+    experience: function () {
+      print(
+        '<div class="blk"><h3>experience.txt</h3><ul class="tl">' +
+        '<li class="now"><div class="when">Nov 2024 to present</div><div class="role">Senior AI Engineer</div><div class="org">Turing, remote, US based</div>' +
+        '<div class="desc">LLM evaluation and benchmarking for frontier labs.</div><ul>' +
+        "<li>Over 100 Dockerized agentic benchmark tasks authored across Harbor, BrowseComp style web research, SkillsBench and multi-file SWE tasks.</li>" +
+        "<li>2,000+ tasks and trajectories reviewed. 10 frontier models evaluated.</li>" +
+        "<li>Calibration sessions across a 60 engineer distributed team. SFT and RLHF data grading.</li>" +
+        "</ul></li>" +
+        '<li><div class="when">Nov 2022 to Dec 2024</div><div class="role">CEO and Head of Engineering</div><div class="org">Cloud Mesh Solutions, Islamabad</div>' +
+        '<div class="desc">Led 10+ engineers on SaaS and marketplace products for international clients. Kaufes, Park4Fly, Buero 365 and Offerten Helden shipped here.</div></li>' +
+        '<li><div class="when">Aug 2021 to May 2022</div><div class="role">Lead Software Engineer</div><div class="org">Ripple Intra Technologies, Karachi</div></li>' +
+        '<li><div class="when">Jun 2020 to Dec 2020</div><div class="role">Software Developer</div><div class="org">Time Global</div></li>' +
+        "</ul></div>"
+      );
+      line("Six years shipping backend systems in Python and TypeScript.", "dim");
+    },
+
+    projects: function () {
+      var cards = projects.map(function (p) {
+        var right = p.link
+          ? ext(p.link, p.link.replace(/^https?:\/\/(www\.)?/, "").replace(/\/.*$/, "") + " ↗")
+          : '<span class="nolink">' + esc(p.note) + "</span>";
+        return '<div class="card"><div class="name"><span>' + esc(p.name) + "</span>" + right + "</div>" +
+          '<div class="what">' + esc(p.what) + "</div>" +
+          '<div class="stack">' + tags(p.stack) + "</div></div>";
+      }).join("");
+      print('<div class="blk"><h3>projects.txt</h3><div class="cards">' + cards + "</div></div>");
+    },
+
+    skills: function () {
+      var rows = skills.map(function (g) {
+        return '<div class="g">' + esc(g[0]) + '</div><div class="t">' +
+          g[1].map(function (s) { return "<span>" + esc(s) + "</span>"; }).join("") + "</div>";
+      }).join("");
+      print('<div class="blk"><h3>skills.txt</h3><div class="skills">' + rows + "</div></div>");
+    },
+
+    ctf: function () {
+      print(
+        '<div class="blk"><h3>ctf.txt</h3><ul class="ctf">' +
+        '<li><div class="rank top">3rd<br>PK</div><div class="ev">Team PsychoTherapist<small>Core member. Ranked 3rd in Pakistan on ' + ext("https://ctftime.org", "ctftime.org") + ".</small></div></li>" +
+        '<li><div class="rank">40th<br>of 250</div><div class="ev">Black Hat MEA 2024 Finals, Riyadh<small>40th of 250 finalist teams after qualifying from 9,000.</small></div></li>' +
+        '<li><div class="rank">2nd<br>PK</div><div class="ev">Ignite National Cyber Hackathon<small>2nd nationally in Red Teaming.</small></div></li>' +
+        '<li><div class="rank top">1st<br>PK</div><div class="ev">DevConCTF\'25, NUST<small>1st nationally.</small></div></li>' +
+        "</ul></div>" +
+        '<div class="blk"><h3>community</h3><ul class="ctf">' +
+        '<li><div class="rank">2023 to 2025</div><div class="ev">Cyber Hacktivators Club (CHC), COMSATS<small>Co-founder and President. ' + ext("https://www.instagram.com/cyber_hacktivators/", "instagram") + ". Organized CodeCon-CUI'24, 350 participants from 14+ universities.</small></div></li>" +
+        '<li><div class="rank">2025 to 2026</div><div class="ev">CUI Tech Society<small>President. ' + ext("https://www.instagram.com/cts.cui/", "instagram") + ". Organized " + ext("https://ww2.comsats.edu.pk/cs/CUI-Tech-Fest-2025.aspx", "CUI Tech Fest 2025") + ", 1,200 participants across 12 modules.</small></div></li>" +
+        "</ul></div>"
+      );
+    },
+
+    education: function () {
+      print(
+        '<div class="blk"><h3>education.txt</h3><ul class="tl">' +
+        '<li><div class="when">2022 to 2026</div><div class="role">BS Cyber Security</div><div class="org">COMSATS University Islamabad</div></li>' +
+        '<li><div class="when">2019 to 2022</div><div class="role">Diploma in Computer Science</div><div class="org">Aptech Pakistan</div></li>' +
+        "</ul></div>"
+      );
+    },
+
+    contact: function () {
+      var node = print(
+        '<div class="blk"><h3>contact.txt</h3><div class="contact">' +
+        '<div><span class="k">email</span><a href="mailto:shaikh.haseeb.work@gmail.com">shaikh.haseeb.work@gmail.com</a><button type="button" class="copy" data-copy="shaikh.haseeb.work@gmail.com">copy</button></div>' +
+        '<div><span class="k">linkedin</span>' + ext("https://www.linkedin.com/in/haseebshaikh03", "linkedin.com/in/haseebshaikh03") + "</div>" +
+        '<div><span class="k">github</span>' + ext("https://github.com/haseebshaikh03", "github.com/haseebshaikh03") + "</div>" +
+        '<div><span class="k">timezone</span><span>Islamabad, UTC+5. I work remotely with US and EU teams.</span></div>' +
+        "</div></div>"
+      );
+      var btn = node.querySelector(".copy");
+      btn.addEventListener("click", function () {
+        var text = btn.getAttribute("data-copy");
+        function done(ok) { btn.textContent = ok ? "copied" : "select it"; setTimeout(function () { btn.textContent = "copy"; }, 1600); }
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text).then(function () { done(true); }, function () { done(false); });
+        } else { done(false); }
+      });
+    },
+
+    cv: function () {
+      print(
+        '<div class="blk"><h3>cv/</h3><div class="cvs">' +
+        '<a href="cv/Abdul_Haseeb_Shaikh_CV_LLM_Evaluation.pdf" target="_blank" rel="noopener"><span class="ic">PDF</span>CV for LLM evaluation and AI roles<small>Abdul_Haseeb_Shaikh_CV_LLM_Evaluation.pdf</small></a>' +
+        '<a href="cv/Abdul_Haseeb_Shaikh_CV_Senior_Software_Engineer.pdf" target="_blank" rel="noopener"><span class="ic">PDF</span>CV for senior software engineering roles<small>Abdul_Haseeb_Shaikh_CV_Senior_Software_Engineer.pdf</small></a>' +
+        "</div></div>"
+      );
+    },
+
+    ls: function () {
+      var names = Object.keys(files).filter(function (f) { return f !== "flag.txt"; });
+      print('<div class="ls"><span class="d">cv/</span>' +
+        names.map(function (f) { return "<span>" + esc(f) + "</span>"; }).join("") +
+        '<span class="x">.flag.txt</span></div>');
+    },
+
+    flag: function () {
+      print(
+        '<div class="flagbox">Nice. You poked at the thing instead of just reading it.<br>' +
+        "<code>CHC{cur10s1ty_15_th3_b3st_3xpl01t}</code><br>" +
+        "Congratulations, you have captured the flag. Submit it nowhere, I already know you found it.</div>"
+      );
+      line("Hint: there is a second flag in the page source.", "dim");
+    },
+
+    theme: function () {
+      var next = toggleTheme();
+      line("Theme switched to " + next + ".", "ok");
+    },
+
+    clear: function () {
+      out.innerHTML = "";
+    },
+
+    whoami: function () { line("haseeb"); },
+    pwd: function () { line("/home/haseeb"); },
+    date: function () { line(new Date().toString()); },
+    echo: function (args) { line(args.join(" ")); }
+  };
+
+  var quips = [
+    "not found. Even my fuzzer would not have guessed that one.",
+    "not found. Try help, it is cheaper than a hint.",
+    "not found. Nice try, but that is not in the wordlist.",
+    "not found. This shell only does what the readme says.",
+    "not found. I checked twice, still nothing."
+  ];
+  var special = {
+    sudo: "Permission denied. Nice try though.",
+    rm: "Not on my portfolio you don't.",
+    exit: "There is no exit. There is only the next command.",
+    vim: "Opening vim would only trap us both here.",
+    hack: "That is what the ctf command is for.",
+    ping: "pong"
+  };
+
+  var commandNames = ["help", "about", "experience", "projects", "skills", "ctf", "education", "contact", "cv", "ls", "cat", "theme", "clear", "flag"];
+
+  function run(raw, echo) {
+    var text = raw.trim();
+    if (!text) return;
+    if (echo !== false) echoCmd(text);
+    var parts = text.split(/\s+/);
+    var cmd = parts[0].toLowerCase();
+    var args = parts.slice(1);
+
+    if (cmd === "cat") {
+      if (!args.length) { line("cat: give me a file. Try ls.", "err"); }
+      else {
+        args.forEach(function (f) {
+          var key = f.replace(/^\.\//, "").replace(/^\./, "");
+          if (files[key]) views[files[key]]();
+          else if (key === "cv" || key === "cv/") line("cat: cv is a directory. Try the cv command.", "err");
+          else line("cat: " + f + ": no such file. Try ls.", "err");
+        });
+      }
+    } else if (views[cmd]) {
+      views[cmd](args);
+    } else if (special[cmd]) {
+      line(special[cmd], "err");
+    } else {
+      line(cmd + ": " + quips[Math.floor(Math.random() * quips.length)], "err");
+    }
+    scrollDown();
+  }
+
+  /* ---------- theme ---------- */
+
+  function currentTheme() {
+    var set = document.documentElement.getAttribute("data-theme");
+    if (set) return set;
+    return window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
+  }
+  function applyTheme(t) {
+    document.documentElement.setAttribute("data-theme", t);
+    var meta = document.querySelector('meta[name="theme-color"]');
+    if (meta) meta.setAttribute("content", t === "light" ? "#eef1f4" : "#0a0e13");
+    try { localStorage.setItem("theme", t); } catch (e) {}
+  }
+  function toggleTheme() {
+    var next = currentTheme() === "light" ? "dark" : "light";
+    applyTheme(next);
+    return next;
+  }
+  try {
+    var saved = localStorage.getItem("theme");
+    if (saved === "light" || saved === "dark") applyTheme(saved);
+  } catch (e) {}
+  document.getElementById("themeBtn").addEventListener("click", function () {
+    var next = toggleTheme();
+    line("Theme switched to " + next + ".", "ok");
+    scrollDown();
+  });
+
+  /* ---------- input: history, tab, submit ---------- */
+
+  var history = [];
+  var hIndex = -1;
+  var draft = "";
+
+  form.addEventListener("submit", function (e) {
+    e.preventDefault();
+    var v = input.value;
+    if (v.trim()) {
+      history.push(v);
+      hIndex = history.length;
+      draft = "";
+    }
+    input.value = "";
+    run(v);
+  });
+
+  input.addEventListener("keydown", function (e) {
+    if (e.key === "ArrowUp") {
+      e.preventDefault();
+      if (!history.length) return;
+      if (hIndex === history.length) draft = input.value;
+      hIndex = Math.max(0, hIndex - 1);
+      input.value = history[hIndex];
+      setTimeout(function () { input.setSelectionRange(input.value.length, input.value.length); }, 0);
+    } else if (e.key === "ArrowDown") {
+      e.preventDefault();
+      if (!history.length) return;
+      hIndex = Math.min(history.length, hIndex + 1);
+      input.value = hIndex === history.length ? draft : history[hIndex];
+    } else if (e.key === "Tab") {
+      e.preventDefault();
+      complete();
+    } else if (e.key === "l" && e.ctrlKey) {
+      e.preventDefault();
+      views.clear();
+    } else if (e.key === "c" && e.ctrlKey && !input.value) {
+      e.preventDefault();
+      echoCmd("^C");
+    }
+  });
+
+  function complete() {
+    var v = input.value;
+    var m = v.match(/^(\s*cat\s+)(\S*)$/i);
+    var pool, prefix, stem;
+    if (m) { pool = Object.keys(files).filter(function (f) { return f !== "flag.txt"; }).concat([".flag.txt"]); prefix = m[1]; stem = m[2]; }
+    else { pool = commandNames; prefix = ""; stem = v.trimStart(); }
+    if (stem === "" && !m) return;
+    var hits = pool.filter(function (c) { return c.indexOf(stem) === 0; });
+    if (hits.length === 1) {
+      input.value = prefix + hits[0] + (hits[0] === "cat" ? " " : "");
+    } else if (hits.length > 1) {
+      var common = hits[0];
+      hits.forEach(function (h) { while (h.indexOf(common) !== 0) common = common.slice(0, -1); });
+      input.value = prefix + common;
+      echoCmd(v);
+      line(hits.join("   "), "dim");
+      scrollDown();
+    }
+  }
+
+  screen.addEventListener("click", function (e) {
+    if (e.target.closest("a, button")) return;
+    if (window.getSelection && String(window.getSelection())) return;
+    input.focus({ preventScroll: true });
+  });
+
+  /* ---------- chips ---------- */
+
+  ["help", "about", "experience", "projects", "skills", "ctf", "contact", "cv", "theme", "clear"].forEach(function (c) {
+    var b = document.createElement("button");
+    b.type = "button";
+    b.textContent = c;
+    b.addEventListener("click", function () {
+      skipBoot();
+      run(c);
+      history.push(c);
+      hIndex = history.length;
+      input.focus({ preventScroll: true });
+    });
+    chips.appendChild(b);
+  });
+
+  /* ---------- boot sequence ---------- */
+
+  var booting = true;
+  var bootTimers = [];
+  var bootSteps = [
+    { type: "whoami", then: function () { line("Abdul Haseeb Shaikh"); } },
+    { type: "cat role.txt", then: function () { line("Senior AI Engineer. LLM evaluation and benchmarking, backend and platform engineer, CTF player."); } },
+    { type: "echo $STATUS", then: function () { line("Islamabad, UTC+5. Working remotely with US and EU teams."); } },
+    { type: "help", then: function () { views.help(); } }
+  ];
+
+  function skipBoot() {
+    if (!booting) return;
+    bootTimers.forEach(clearTimeout);
+    bootTimers = [];
+    booting = false;
+    screen.classList.remove("typing");
+    var ghost = document.getElementById("ghost");
+    if (ghost) ghost.remove();
+    out.innerHTML = "";
+    bootSteps.forEach(function (s) { echoCmd(s.type); s.then(); });
+    scrollDown();
+  }
+
+  function typeStep(i) {
+    if (i >= bootSteps.length) {
+      booting = false;
+      screen.classList.remove("typing");
+      scrollDown();
+      if (window.innerWidth > 900) input.focus({ preventScroll: true });
+      return;
+    }
+    var step = bootSteps[i];
+    var ghost = print('<div class="line cmd" id="ghost"><span class="ps"><span class="who"><b>haseeb</b>@ctf:<span class="path">~</span></span>$</span> <span class="typed"></span><span class="caret"></span></div>');
+    var typed = ghost.querySelector(".typed");
+    var j = 0;
+    function tick() {
+      if (j <= step.type.length) {
+        typed.textContent = step.type.slice(0, j);
+        j++;
+        bootTimers.push(setTimeout(tick, 34 + Math.random() * 40));
+      } else {
+        bootTimers.push(setTimeout(function () {
+          ghost.removeAttribute("id");
+          ghost.querySelector(".caret").remove();
+          step.then();
+          scrollDown();
+          bootTimers.push(setTimeout(function () { typeStep(i + 1); }, 260));
+        }, 180));
+      }
+    }
+    bootTimers.push(setTimeout(tick, i === 0 ? 400 : 0));
+  }
+
+  if (reduced) {
+    skipBoot();
+  } else {
+    screen.classList.add("typing");
+    typeStep(0);
+    var stop = function () { skipBoot(); };
+    screen.addEventListener("click", stop, { once: true });
+    document.addEventListener("keydown", function once(e) {
+      if (e.key === "Tab" || e.metaKey || e.ctrlKey || e.altKey) return;
+      document.removeEventListener("keydown", once);
+      skipBoot();
+      input.focus({ preventScroll: true });
+    });
+  }
+
+  /* ---------- clock ---------- */
+
+  var clock = document.getElementById("clock");
+  function tickClock() {
+    try {
+      var s = new Intl.DateTimeFormat("en-GB", { timeZone: "Asia/Karachi", hour: "2-digit", minute: "2-digit", hour12: false }).format(new Date());
+      clock.textContent = s + " PKT";
+    } catch (e) { clock.textContent = "UTC+5"; }
+  }
+  tickClock();
+  setInterval(tickClock, 15000);
+  document.getElementById("year").textContent = String(new Date().getFullYear());
+
+  /* ---------- GitHub live stats ---------- */
+
+  var repos = document.getElementById("ghRepos");
+  var followers = document.getElementById("ghFollowers");
+  var note = document.getElementById("ghNote");
+  var noteText = document.getElementById("ghNoteText");
+
+  function ghFail() {
+    repos.textContent = "n/a";
+    followers.textContent = "n/a";
+    repos.classList.remove("wait");
+    followers.classList.remove("wait");
+    noteText.innerHTML = "GitHub did not answer just now. See " + ext("https://github.com/haseebshaikh03", "github.com/haseebshaikh03") + " directly.";
+    note.hidden = false;
+  }
+
+  if (window.fetch) {
+    var ctrl = typeof AbortController !== "undefined" ? new AbortController() : null;
+    var timer = setTimeout(function () { if (ctrl) ctrl.abort(); }, 6000);
+    fetch("https://api.github.com/users/haseebshaikh03", { headers: { Accept: "application/vnd.github+json" }, signal: ctrl ? ctrl.signal : undefined })
+      .then(function (r) { if (!r.ok) throw new Error(String(r.status)); return r.json(); })
+      .then(function (d) {
+        clearTimeout(timer);
+        repos.textContent = Number(d.public_repos || 0).toLocaleString("en-US");
+        followers.textContent = Number(d.followers || 0).toLocaleString("en-US");
+        repos.classList.remove("wait");
+        followers.classList.remove("wait");
+        noteText.innerHTML = "Live from " + ext("https://github.com/haseebshaikh03", "@haseebshaikh03") + (d.created_at ? ", on GitHub since " + new Date(d.created_at).getFullYear() : "") + ".";
+        note.hidden = false;
+      })
+      .catch(function () { clearTimeout(timer); ghFail(); });
+  } else {
+    ghFail();
+  }
+
+  /* ---------- decorative contribution grid ---------- */
+
+  var cg = document.getElementById("cg");
+  var seed = 1337;
+  function rnd() { seed = (seed * 16807) % 2147483647; return seed / 2147483647; }
+  var cols = 26, rows = 7, html = "";
+  for (var r = 0; r < rows; r++) {
+    for (var c = 0; c < cols; c++) {
+      var wave = 0.5 + 0.5 * Math.sin(c / 3.1 + r / 2.2);
+      var v = rnd() * 0.75 + wave * 0.6;
+      var lvl = v > 1.12 ? 4 : v > 0.92 ? 3 : v > 0.7 ? 2 : v > 0.45 ? 1 : 0;
+      var delay = (c * 0.03 + r * 0.02).toFixed(2);
+      html += '<i data-l="' + lvl + '" style="--d:' + delay + 's"></i>';
+    }
+  }
+  cg.innerHTML = html;
+})();
+</script>
+</body>
+</html>
