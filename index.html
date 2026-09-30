@@ -336,6 +336,9 @@
   .mini h4 { margin: 0; font-family: var(--font-display); font-weight: 700; font-size: var(--step-1); letter-spacing: -0.01em; line-height: 1.25; }
   .mini p { color: var(--ink-2); font-size: 0.9375rem; line-height: 1.5; }
   .mini .card-foot { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: auto; padding-top: 6px; }
+  .section-head + .others-head { margin-top: 0; }
+  .eval-work .mini { background: var(--surface, transparent); }
+  .eval-work .names li { font-weight: 500; font-size: 0.8125rem; color: var(--ink-2); }
   .names { display: flex; flex-wrap: wrap; gap: 6px; list-style: none; }
   .names li { font-weight: 600; font-size: 0.9375rem; padding: 2px 9px; border: 1px solid var(--line); border-radius: 6px; color: var(--ink); }
 
@@ -604,9 +607,68 @@
       <div class="section-head">
         <p class="eyebrow">2021 to 2026</p>
         <h2 id="projects-title">Projects</h2>
-        <p>Products I built or led the backend for. Most of this lives in private client and company repositories, so some entries can only be described.</p>
+        <p>Evaluation work for frontier AI labs, and products I built or led the backend for. Most of this lives in private client and company repositories, so some entries can only be described.</p>
       </div>
 
+      <div class="others-head">
+        <h3>LLM evaluation work</h3>
+        <p>Programmes at Turing for frontier labs, described by type and domain</p>
+      </div>
+      <ul class="others eval-work">
+        <li class="card mini reveal">
+          <h4>Agentic benchmark tasks</h4>
+          <p>Dockerized tasks where an agent works through a realistic problem end to end. Each one ships with an instruction, a reference solution and an automated verifier.</p>
+          <ul class="names" aria-label="Domains">
+            <li>Finance and accounting</li><li>Data analysis and statistics</li><li>Infrastructure and SRE</li><li>Security and access control</li><li>Logistics and retail</li><li>Healthcare and HR</li>
+          </ul>
+          <div class="card-foot"><span class="built">Turing</span><span class="pill">NDA</span></div>
+        </li>
+        <li class="card mini reveal">
+          <h4>Deep web research</h4>
+          <p>Multi-hop research questions that make an agent search, cross-check sources and land on one answer that can be verified.</p>
+          <ul class="names" aria-label="Focus">
+            <li>Open web search</li><li>Source verification</li><li>Answer grading</li>
+          </ul>
+          <div class="card-foot"><span class="built">Turing</span><span class="pill">NDA</span></div>
+        </li>
+        <li class="card mini reveal">
+          <h4>Tool use and MCP environments</h4>
+          <p>Tasks where an agent chains many tools and MCP servers across real apps to finish a job, graded on the state it leaves behind.</p>
+          <ul class="names" aria-label="Apps">
+            <li>Calendars and email</li><li>CRM and outreach</li><li>Support desks</li><li>Files and docs</li>
+          </ul>
+          <div class="card-foot"><span class="built">Turing</span><span class="pill">NDA</span></div>
+        </li>
+        <li class="card mini reveal">
+          <h4>Simulated enterprise apps</h4>
+          <p>Seeded app environments where web and API agents do everyday business work, along with the test automation and quality checks behind them.</p>
+          <ul class="names" aria-label="Apps">
+            <li>Ticketing</li><li>Scheduling</li><li>Expenses</li><li>Meetings</li><li>HR databases</li>
+          </ul>
+          <div class="card-foot"><span class="built">Turing</span><span class="pill">NDA</span></div>
+        </li>
+        <li class="card mini reveal">
+          <h4>Software engineering evaluation</h4>
+          <p>Multi-file coding tasks, instruction-following variants of real repository issues, and QC of long multi-turn coding trajectories.</p>
+          <ul class="names" aria-label="Focus">
+            <li>Repository tasks</li><li>Instruction following</li><li>Multi-turn review</li>
+          </ul>
+          <div class="card-foot"><span class="built">Turing</span><span class="pill">NDA</span></div>
+        </li>
+        <li class="card mini reveal">
+          <h4>Training data and grading</h4>
+          <p>SFT and RLHF data for reasoning and coding, from writing and grading prompts to building task taxonomies.</p>
+          <ul class="names" aria-label="Focus">
+            <li>General reasoning</li><li>Coding taxonomy</li><li>Enterprise workflows</li><li>Preference grading</li>
+          </ul>
+          <div class="card-foot"><span class="built">Turing</span><span class="pill">NDA</span></div>
+        </li>
+      </ul>
+
+      <div class="others-head">
+        <h3>Products</h3>
+        <p>Selected builds, with live links where they exist</p>
+      </div>
       <div class="featured">
         <article class="card feature reveal">
           <div class="card-top">
