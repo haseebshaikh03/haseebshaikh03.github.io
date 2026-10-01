@@ -270,10 +270,10 @@
   .hero-meta .live::before { content: ""; width: 8px; height: 8px; background: var(--accent); }
   .hero h1 {
     margin-top: clamp(20px, 3vw, 36px);
-    font-size: var(--step-5); font-weight: 800; font-stretch: 116%;
-    letter-spacing: -0.045em; line-height: 0.86; text-wrap: initial;
+    font-size: clamp(2.6rem, 1.5rem + 3.6vw, 4.75rem); font-weight: 800; font-stretch: 108%;
+    letter-spacing: -0.04em; line-height: 0.95; text-wrap: balance;
   }
-  .hero h1 .line { display: block; }
+  .hero h1 .line { display: inline; }
   .hero h1 .w { display: inline-block; overflow: clip; overflow-clip-margin: 0.12em; vertical-align: top; padding-bottom: 0.04em; }
   .hero h1 .w > span { display: inline-block; }
   .hero h1 .stop { color: var(--accent); }
@@ -891,7 +891,7 @@
         </article>
 
         <article class="card feature reveal" style="--stagger:1">
-          <div class="cover photo"><img src="assets/projects/exploitops.webp" alt="ExploitOps dashboard from the final year project build" width="1200" height="666" loading="lazy" decoding="async"><span class="cover-badge">From the working build</span></div>
+          <div class="cover photo"><img src="assets/projects/exploitops.webp" alt="ExploitOps dashboard from the final year project build" width="1200" height="666" loading="lazy" decoding="async"></div>
           <div class="feature-top">
             <h3>ExploitOps</h3>
             <span class="mark-private" title="Source is in a private repository">Private repo</span>
