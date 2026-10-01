@@ -314,6 +314,9 @@
   .lg { display: block; background: currentColor; -webkit-mask: var(--m) center / contain no-repeat; mask: var(--m) center / contain no-repeat; }
   .lg-turing { --m: url(assets/logos/turing.svg); width: 128px; height: 20px; }
   .lg-cloudmesh { --m: url(assets/logos/cloudmesh.png); width: 150px; height: 26px; }
+  .lg-fuzion { --m: url(assets/logos/fuziondev.png); width: 132px; height: 20px; }
+  .lg-ripple { --m: url(assets/logos/ripple.png); width: 112px; height: 23px; }
+  .lg-cts { --m: url(assets/logos/cts-text.png); width: 62px; height: 30px; }
   .lg-comsats { --m: url(assets/logos/comsats-mask.png); width: 38px; height: 38px; }
   .lg-blackhat { --m: url(assets/logos/blackhat.svg); width: 118px; height: 30px; }
   .wordmark { font-family: var(--font-display); font-weight: 800; font-size: 1.125rem; letter-spacing: -0.02em; line-height: 1; white-space: nowrap; }
@@ -344,6 +347,13 @@
   .tile.turing { background: var(--turing-tile); border-color: var(--turing-tile); }
   .tile.turing img { width: 62%; }
   .tile.seal img { width: 88%; }
+  .tile.light { background: #fff; border-color: #e4e2dc; }
+  .tile.light img { width: 86%; }
+  .tile.dark { background: #121214; border-color: #121214; }
+  .tile.dark img { width: 60%; }
+  .tile.photo img { width: 100%; height: 100%; object-fit: cover; }
+  .lead-head { display: flex; align-items: center; gap: 14px; }
+  .lead-logo { width: 52px; height: auto; flex: none; }
   .tile.mono { background: transparent; border: 1.5px solid var(--ink); color: var(--ink); font: 800 0.9375rem/1 var(--font-display); font-stretch: 115%; letter-spacing: -0.02em; }
 
   /* ---------- Experience timeline ---------- */
@@ -627,10 +637,11 @@
       <div class="marquee" id="marquee">
         <ul class="marquee-track">
           <li><span class="lg lg-turing" role="img" aria-label="Turing"></span></li>
-          <li><span class="wordmark wide">FuzionDev<small>LLC</small></span></li>
+          <li><span class="lg lg-fuzion" role="img" aria-label="FuzionDev LLC"></span></li>
           <li><span class="lg lg-cloudmesh" role="img" aria-label="Cloud Mesh Solutions"></span></li>
-          <li><span class="wordmark cond">Ripple Intra Technologies</span></li>
+          <li><span class="lg lg-ripple" role="img" aria-label="Ripple Intra Technologies"></span></li>
           <li><span class="wordmark">Time Global</span></li>
+          <li><span class="lg lg-cts" role="img" aria-label="CUI Tech Society"></span></li>
           <li><span class="lg lg-comsats" role="img" aria-label="COMSATS University Islamabad seal"></span><span class="lg-text">COMSATS University<br>Islamabad</span></li>
           <li><span class="lg lg-blackhat" role="img" aria-label="Black Hat MEA"></span></li>
         </ul>
@@ -688,7 +699,7 @@
 
         <li class="role-item reveal">
           <div class="role-meta"><div class="role-meta-inner">
-            <span class="tile mono" role="img" aria-label="FuzionDev LLC monogram">FD</span>
+            <span class="tile dark"><img src="assets/logos/fuziondev-mark.png" alt="FuzionDev LLC logo" width="102" height="89" loading="lazy"></span>
             <span class="role-dates">Dec 2025 to Mar 2026</span>
             <span class="role-org">FuzionDev LLC</span>
             <span class="role-place">US, remote</span>
@@ -743,7 +754,7 @@
 
         <li class="role-item reveal">
           <div class="role-meta"><div class="role-meta-inner">
-            <span class="tile mono" role="img" aria-label="Ripple Intra Technologies monogram">RI</span>
+            <span class="tile light"><img src="assets/logos/ripple.png" alt="Ripple Intra Technologies logo" width="400" height="82" loading="lazy"></span>
             <span class="role-dates">Aug 2021 to May 2022</span>
             <span class="role-org">Ripple Intra Technologies</span>
             <span class="role-place">Karachi</span>
@@ -761,7 +772,7 @@
 
         <li class="role-item reveal">
           <div class="role-meta"><div class="role-meta-inner">
-            <span class="tile mono" role="img" aria-label="Time Global monogram">TG</span>
+            <span class="tile photo"><img src="assets/logos/timeglobal.webp" alt="Time Global logo" width="200" height="200" loading="lazy"></span>
             <span class="role-dates">Jun 2020 to Dec 2020</span>
             <span class="role-org">Time Global</span>
           </div></div>
@@ -1052,7 +1063,7 @@
       <div class="lead-grid">
         <article class="lead reveal">
           <span class="role-dates">2025 to 2026</span>
-          <h3><a href="https://www.instagram.com/cts.cui/" target="_blank" rel="noopener noreferrer">CUI Tech Society</a></h3>
+          <div class="lead-head"><img class="lead-logo" src="assets/logos/cts-icon.png" alt="CUI Tech Society logo" width="200" height="139" loading="lazy"><h3><a href="https://www.instagram.com/cts.cui/" target="_blank" rel="noopener noreferrer">CUI Tech Society</a></h3></div>
           <p class="who">President, COMSATS University Islamabad</p>
           <ul class="bullets">
             <li>Led the umbrella society for the Computer Science department, coordinating all of its student programs and technical societies.</li>
@@ -1093,7 +1104,7 @@
         </li>
         <li class="reveal">
           <span class="role-dates">2019 to 2022</span>
-          <span class="tile mono" role="img" aria-label="Aptech Pakistan monogram">AP</span>
+          <span class="tile light"><img src="assets/logos/aptech.png" alt="Aptech logo" width="400" height="155" loading="lazy"></span>
           <div>
             <h3>Diploma in Computer Science</h3>
             <p class="school">Aptech Pakistan</p>
